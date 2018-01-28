@@ -1,5 +1,6 @@
 
 // use symmetrickey;
+mod chacha;
 
 mod key {
 	#[macro_export]
@@ -39,27 +40,26 @@ mod tests {
     }
 
     // keystream Function Test Vector #1
-	/*
-@system unittest {
-	immutable ubyte[256/8] inkey =  0;
-	const auto mykey = key!(256/8)(inkey);
-	immutable nonce mynonce = [ 0x00000000, 0x00000000, 0x0 ];
-	auto c = chacha!(20, key!(256 / 8))(mykey, mynonce);
+	#[test]
+	fn keystream_1() {
+		let inkey : [u8;256/8];
+		let mykey = key!(256/8)(inkey);
+		let mynonce : nonce = [ 0x00000000, 0x00000000, 0x0 ];
+		let c = chacha!(20, key!(256 / 8))(mykey, mynonce);
 	
-	ubyte[64] keystream; 
-	c.get_keystream(keystream, 0);
-	auto writer = appender!string();
-	foreach ( uint b ; keystream) {
-			formattedWrite(writer, "%02x ", (b));
+		let mut keystream : [u8;64]; 
+		c.get_keystream(&keystream, 0);
+		let actual = keystream.iter()
+                        	  .map(|b| format!("{:02X}", b))
+                              .collect()
+							  .connect(" ");
+		let expected = "76 b8 e0 ad a0 f1 3d 90 40 5d 6a e5 53 86 bd 28 " +
+	                   "bd d2 19 b8 a0 8d ed 1a a8 36 ef cc 8b 77 0d c7 " + 
+					   "da 41 59 7c 51 57 48 8d 77 24 e0 3f b8 d8 4a 37 " +
+					   "6a 43 b8 f4 15 18 a1 1c c3 87 b6 69 b2 ee 65 86 ";
+		assert_eq!(actual, expected);
 	}
-	immutable actual = writer.data;
-	immutable expected = "76 b8 e0 ad a0 f1 3d 90 40 5d 6a e5 53 86 bd 28 " ~
-	                     "bd d2 19 b8 a0 8d ed 1a a8 36 ef cc 8b 77 0d c7 " ~
-						 "da 41 59 7c 51 57 48 8d 77 24 e0 3f b8 d8 4a 37 " ~
-						 "6a 43 b8 f4 15 18 a1 1c c3 87 b6 69 b2 ee 65 86 ";
-	assert (actual == expected);
-}
-
+/*
 /// keystream Function Test Vector #2
 @system unittest {
 	immutable ubyte[256/8] inkey =  0;

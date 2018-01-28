@@ -11,27 +11,35 @@ const nonce_length : usize = 3;
 type nonce = [u32;nonce_length];
 
 // Alias for generated keystream block
-use keystream_block as u8[inner_state_size];
+type keystream_block = [u8;inner_state_size];
 
-/// Structure for chacha algorithm
-struct Chacha<usize rounds, alias k> {
-	static_assert!(rounds % 2 == 0);  // Number of rounds has to be even.
-	/// Index of block number
-	const block_number_index : usize = 12;
-	/// The state
-	inner_state state;
+// Index of block number
+const block_number_index : usize = 12;
+
+
+// Structure for chacha algorithm
+pub struct Chacha {
+	// The state
+	state : inner_state
+}
+
+fn as_le(a : [u8;4]) -> u32 {
+	(((a[0] as u32) << 24) | ((a[1] as u32) << 16) | ((a[2] as u32) << 8) | ((a[3] as u32) << 0)) as u32
 }
 
 impl Chacha {
-	 this(ref const k usedkey, ref const nonce n) {
-		state[0] = littleEndianToNative!(uint,4u)([0x65u, 0x78u, 0x70u, 0x61u]);
-		state[1] = littleEndianToNative!(uint,4u)([0x6eu, 0x64u, 0x20u, 0x33u]);
-		state[2] = littleEndianToNative!(uint,4u)([0x32u, 0x2du, 0x62u, 0x79u]);
-		state[3] = littleEndianToNative!(uint,4u)([0x74u, 0x65u, 0x20u, 0x6bu]);
-	    
-	    reset_block_counter();
-	    set_key(usedkey);
-	    set_nonce(n);
+	pub fn new(k : [u8;256/8], n : nonce) -> Chacha {
+		Chacha {
+			state : [ 0x65787061u32.to_le(),
+			          0x6e642033u32.to_le(),
+			          0x322d6279u32.to_le(),
+			          0x7465206bu32.to_le(),
+					  as_le(k[0..4]),
+					  as_le(k[4..8]),
+					  as_le(k[8..12]),
+					  as_le(k[12..16]),
+					  0, 0, 0, 0 /* BN */, n[0], n[1], n[2], 0 ],
+		}
 	}
 
     /**
@@ -42,44 +50,45 @@ impl Chacha {
      *   blocknumber = the blocknumber to generate the keystream for
      *
      */
-	fn get_keystream(ref keystream_block keystream, uint blocknumber) {
-		state[block_number_index] = blocknumber;
-		auto working_state = state;
-		for (int i = 0; i < rounds/2; ++i) {
-			quarter_round(working_state, 0u, 4u, 8u, 12u);
-			quarter_round(working_state, 1u, 5u, 9u, 13u);
-			quarter_round(working_state, 2u, 6u, 10u, 14u);
-			quarter_round(working_state, 3u, 7u, 11u, 15u);
-			quarter_round(working_state, 0u, 5u, 10u, 15u);
-			quarter_round(working_state, 1u, 6u, 11u, 12u);
-			quarter_round(working_state, 2u, 7u, 8u, 13u);
-			quarter_round(working_state, 3u, 4u, 9u, 14u);
+	fn get_keystream(&mut self, keystream : keystream_block, blocknumber : u32) {
+		self.state[block_number_index] = blocknumber;
+		let mut working_state = self.state.clone();
+		for _ in 0 .. 20/2 {
+			Chacha::quarter_round(working_state, 0, 4, 8, 12);
+			Chacha::quarter_round(working_state, 1, 5, 9, 13);
+			Chacha::quarter_round(working_state, 2, 6, 10, 14);
+			Chacha::quarter_round(working_state, 3, 7, 11, 15);
+			Chacha::quarter_round(working_state, 0, 5, 10, 15);
+			Chacha::quarter_round(working_state, 1, 6, 11, 12);
+			Chacha::quarter_round(working_state, 2, 7, 8, 13);
+			Chacha::quarter_round(working_state, 3, 4, 9, 14);
 		}
-		working_state[] += state[];
-		serialize_inner_state(keystream, working_state);
+		working_state.iter_mut().zip(self.state.iter()).map(|(a, &b)| *a + b);
+		//working_state += state;
+		//self.serialize_inner_state(keystream, working_state);
 	}
-
-	fn get_next_keystream(ref keystream_block keystream) {
-		return get_keystream(keystream, state[block_number_index] + 1);
+/*
+	fn get_next_keystream(&mut self, keystream : keystream_block) {
+		return self.get_keystream(keystream, self.state[block_number_index] + 1);
 	}
-	
+*/	
     /** Resets the block number to zero. */
-	fn reset_block_counter() {
-		state[block_number_index] = 0;
+	fn reset_block_counter(&mut self) {
+		self.state[block_number_index] = 0;
 	}
 
     /** Copies the key into the state. */
-	fn set_key(const ref k usedkey) {
-		for (auto i = 0; i < usedkey.get_key_length(); i++) {
-	    	state[4+i] = usedkey.get_key_bits()[i];
+	fn set_key(&mut self,  usedkey : [u8;256/8]) {
+		for i in usedkey.iter() {
+	//		self.state[4 + i] = usedkey[i];
 	    }
 	}
 
     /** Sets the nonce in the state. */
-	fn set_nonce(const ref nonce n) {
-		state[13] = n[0];
-	    state[14] = n[1];
-	    state[15] = n[2];
+	fn set_nonce(&mut self, n : nonce) {
+		self.state[13] = n[0];
+	    self.state[14] = n[1];
+	    self.state[15] = n[2];
 	}
 
     /** 
@@ -90,8 +99,7 @@ impl Chacha {
      *  a, b, c, d = constant of algorithm
      *
      */
-	fn quarter_round(ref inner_state state, immutable size_t a, immutable size_t b,
-			immutable size_t c, immutable size_t d) {
+	fn quarter_round(mut state : inner_state, a : usize, b : usize, c : usize, d : usize) {
 		state[a] += state[b];
 		state[d] ^= state[a];
 		state[d] = state[d].rotate_left(16);
@@ -107,12 +115,12 @@ impl Chacha {
     }
 
 	/** Copy resulting key stream as little endian to receiving buffer. */	
-	fn serialize_inner_state(ref keystream_block keystream, inner_state state) {
-		for (int i = 0; i < state.length; i++) {
-			keystream[(i*4)..(i*4+4)] = nativeToLittleEndian(state[i]);
+	fn serialize_inner_state(keystream : keystream_block, state : inner_state) {
+		for (i, s) in state.iter().enumerate() {
+			//keystream[(i*4)..(i*4+4)] = nativeToLittleEndian(state[i]);
 		}
 	}
 	
 }
-
 }
+
