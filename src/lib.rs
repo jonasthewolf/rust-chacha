@@ -1,35 +1,8 @@
+#![feature(iterator_step_by)]
 
-// use symmetrickey;
-mod chacha;
-
-mod key {
-	#[macro_export]
-	macro_rules! key {
-		($key_length:expr) => { 
-			type key_word_size = [u32;key_length/4];
-
-			// Key length in byte
-			struct Key {
-				key_bits : [u32;key_length/4]
-			}
-
-			impl Key {
-				pub fn new(inkey : [u8;key_length]) -> Key {
-					for i in (0 .. key_length).step_by(4) {
-						let inkey_slice = inkey[i..i+4];
-						key_bits[i/4] = littleEndianToNative!(uint, inkey_slice.length)(inkey_slice);
-					}
-				}
-				pub fn get_key_bits(&self) -> key_word_size { 
-					return self.key_bits; 
-				}
-				pub fn get_key_length(&self) -> usize { 
-					return self.key_bits.length; 
-				}
-			}
-		}
-	}
-}
+mod util;
+pub mod chacha;
+pub mod key;
 
 
 #[cfg(test)]
@@ -42,21 +15,25 @@ mod tests {
     // keystream Function Test Vector #1
 	#[test]
 	fn keystream_1() {
-		let inkey : [u8;256/8];
-		let mykey = key!(256/8)(inkey);
-		let mynonce : nonce = [ 0x00000000, 0x00000000, 0x0 ];
-		let c = chacha!(20, key!(256 / 8))(mykey, mynonce);
-	
-		let mut keystream : [u8;64]; 
-		c.get_keystream(&keystream, 0);
+		use key;
+		use chacha;
+		let inkey : [u8;256/8] = [0;32];
+		let mykey = key::Key::new(inkey);
+		let mynonce : chacha::Nonce = [ 0x00000000, 0x00000000, 0x0 ];
+		/* let c = chacha!(20, key!(256 / 8))(mykey, mynonce); */
+		let mut c = chacha::Chacha::new(mykey, mynonce);
+		c.print_state();
+		let mut keystream : [u8;64] = [0;64]; 
+		c.get_keystream(&mut keystream, 0);
 		let actual = keystream.iter()
                         	  .map(|b| format!("{:02X}", b))
-                              .collect()
-							  .connect(" ");
-		let expected = "76 b8 e0 ad a0 f1 3d 90 40 5d 6a e5 53 86 bd 28 " +
-	                   "bd d2 19 b8 a0 8d ed 1a a8 36 ef cc 8b 77 0d c7 " + 
-					   "da 41 59 7c 51 57 48 8d 77 24 e0 3f b8 d8 4a 37 " +
-					   "6a 43 b8 f4 15 18 a1 1c c3 87 b6 69 b2 ee 65 86 ";
+							  .collect::<Vec<_>>()
+							  .join(" ");
+		let expected = format!("{}{}{}{}", 
+					   "76 b8 e0 ad a0 f1 3d 90 40 5d 6a e5 53 86 bd 28 ",
+	                   "bd d2 19 b8 a0 8d ed 1a a8 36 ef cc 8b 77 0d c7 ",
+					   "da 41 59 7c 51 57 48 8d 77 24 e0 3f b8 d8 4a 37 ", 
+					   "6a 43 b8 f4 15 18 a1 1c c3 87 b6 69 b2 ee 65 86 ");
 		assert_eq!(actual, expected);
 	}
 /*
