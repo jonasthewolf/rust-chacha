@@ -12,13 +12,11 @@ mod tests {
 	#[test]
 	fn keystream_1() {
 		let inkey : [u8;256/8] = [0;32];
-		let mykey = key::Key::new(inkey);
+		let mykey = key::Key::new(&inkey);
 		let mynonce : chacha::Nonce = [ 0x00000000, 0x00000000, 0x0 ];
-		let mut c = chacha::Chacha::new(mykey, mynonce);
-		c.print_state();
+		let mut c = chacha::Chacha::new(&mykey, &mynonce);
 		let mut keystream : [u8;64] = [0;64]; 
 		c.get_keystream(&mut keystream, 0);
-		c.print_state();
 		let actual = keystream.iter()
                         	  .map(|b| format!("{:02x}", b))
 							  .collect::<Vec<_>>()
@@ -30,49 +28,51 @@ mod tests {
 					   "6a 43 b8 f4 15 18 a1 1c c3 87 b6 69 b2 ee 65 86");
 		assert_eq!(actual, expected);
 	}
-/*
-/// keystream Function Test Vector #2
-@system unittest {
-	immutable ubyte[256/8] inkey =  0;
-	const auto mykey = key!(256/8)(inkey);
-	immutable nonce mynonce = [ 0x00000000, 0x00000000, 0x0 ];
-	auto c = chacha!(20, key!(256 / 8))(mykey, mynonce);
-	
-	ubyte[64] keystream; 
-	c.get_keystream(keystream, 1);
-	auto writer = appender!string();
-	foreach ( uint b ; keystream) {
-			formattedWrite(writer, "%02x ", (b));
+
+	/// keystream Function Test Vector #2
+	#[test]
+	fn keystream_2() {
+		let inkey : [u8;256/8] = [0;32];
+		let mykey = key::Key::new(&inkey);
+		let mynonce : chacha::Nonce = [ 0x00000000, 0x00000000, 0x0 ];
+		let mut c = chacha::Chacha::new(&mykey, &mynonce);
+		let mut keystream : [u8;64] = [0;64]; 
+		c.get_keystream(&mut keystream, 1);
+		let actual = keystream.iter()
+                       	  	.map(|b| format!("{:02x}", b))
+						  	.collect::<Vec<_>>()
+						  	.join(" ");
+		let expected = format!("{}{}{}{}", 
+				     	"9f 07 e7 be 55 51 38 7a 98 ba 97 7c 73 2d 08 0d cb ",
+					 	"0f 29 a0 48 e3 65 69 12 c6 53 3e 32 ee 7a ed 29 b7 ",
+					 	"21 76 9c e6 4e 43 d5 71 33 b0 74 d8 39 d5 31 ed 1f ",
+					 	"28 51 0a fb 45 ac e1 0a 1f 4b 79 4d 6f");
+		assert_eq!(actual, expected);
 	}
-	immutable actual = writer.data;
-	immutable expected = "9f 07 e7 be 55 51 38 7a 98 ba 97 7c 73 2d 08 0d cb " ~
-						 "0f 29 a0 48 e3 65 69 12 c6 53 3e 32 ee 7a ed 29 b7 " ~
-						 "21 76 9c e6 4e 43 d5 71 33 b0 74 d8 39 d5 31 ed 1f " ~
-						 "28 51 0a fb 45 ac e1 0a 1f 4b 79 4d 6f ";
-	assert (actual == expected);
-}
 
 /// keystream Function Test Vector #3
-@system unittest {
-	immutable ubyte[256/8] inkey = [31:1];
-	const auto mykey = key!(256/8)(inkey);
-	immutable nonce mynonce = [ 0x00000000, 0x00000000, 0x0 ];
-	auto c = chacha!(20, key!(256 / 8))(mykey, mynonce);
-	
-	ubyte[64] keystream; 
-	c.get_keystream(keystream, 1);
-	auto writer = appender!string();
-	foreach ( uint b ; keystream) {
-			formattedWrite(writer, "%02x ", (b));
+	/// keystream Function Test Vector #3
+	#[test]
+	fn keystream_3() {
+		let mut inkey : [u8;256/8] = [0;32];
+		inkey[31] = 1;
+		let mykey = key::Key::new(&inkey);
+		let mynonce : chacha::Nonce = [ 0x00000000, 0x00000000, 0x0 ];
+		let mut c = chacha::Chacha::new(&mykey, &mynonce);
+		let mut keystream : [u8;64] = [0;64]; 
+		c.get_keystream(&mut keystream, 1);
+		let actual = keystream.iter()
+                       	  	.map(|b| format!("{:02x}", b))
+						  	.collect::<Vec<_>>()
+						  	.join(" ");
+		let expected = format!("{}{}{}{}", 
+				     	 "3a eb 52 24 ec f8 49 92 9b 9d 82 8d b1 ce d4 dd 83 ",
+						 "20 25 e8 01 8b 81 60 b8 22 84 f3 c9 49 aa 5a 8e ca ", 
+						 "00 bb b4 a7 3b da d1 92 b5 c4 2f 73 f2 fd 4e 27 36 ", 
+						 "44 c8 b3 61 25 a6 4a dd eb 00 6c 13 a0");
+		assert_eq!(actual, expected);
 	}
-	immutable actual = writer.data;
-	immutable expected = "3a eb 52 24 ec f8 49 92 9b 9d 82 8d b1 ce d4 dd 83 " ~
-						 "20 25 e8 01 8b 81 60 b8 22 84 f3 c9 49 aa 5a 8e ca " ~ 
-						 "00 bb b4 a7 3b da d1 92 b5 c4 2f 73 f2 fd 4e 27 36 " ~ 
-						 "44 c8 b3 61 25 a6 4a dd eb 00 6c 13 a0 ";
-	assert (actual == expected);
-}
-
+/*
 /// keystream Function Test Vector #4
 @system unittest {
 	immutable ubyte[256/8] inkey = [1:0xff];

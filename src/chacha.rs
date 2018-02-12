@@ -23,17 +23,21 @@ pub struct Chacha {
 }
 
 impl Chacha {
-	pub fn new(k : Key, n : Nonce) -> Chacha {
+	pub fn new(k : &Key, n : &Nonce) -> Chacha {
 		Chacha {
-			state : [ 0x65787061u32.to_be(), /* FIXME: Wrong endianess of constants */
-			          0x6e642033u32.to_be(),
-			          0x322d6279u32.to_be(),
-			          0x7465206bu32.to_be(),
+			state : [ u32::from_le(0x61707865), 
+					  u32::from_le(0x3320646e), 
+					  u32::from_le(0x79622d32),
+					  u32::from_le(0x6b206574),
 					  k.get_key_bits()[0].to_le(),
 					  k.get_key_bits()[1].to_le(),
 					  k.get_key_bits()[2].to_le(),
 					  k.get_key_bits()[3].to_le(),
-					  0, 0, 0, 0 /* BN */, n[0], n[1], n[2], 0 ],
+					  k.get_key_bits()[4].to_le(),
+					  k.get_key_bits()[5].to_le(),
+					  k.get_key_bits()[6].to_le(),
+					  k.get_key_bits()[7].to_le(),
+					  0 /* BN */, n[0], n[1], n[2] ],
 		}
 	}
 
