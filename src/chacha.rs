@@ -25,10 +25,10 @@ pub struct Chacha {
 impl Chacha {
 	pub fn new(k : Key, n : Nonce) -> Chacha {
 		Chacha {
-			state : [ 0x65787061u32.to_le(),
-			          0x6e642033u32.to_le(),
-			          0x322d6279u32.to_le(),
-			          0x7465206bu32.to_le(),
+			state : [ 0x65787061u32.to_be(), /* FIXME: Wrong endianess of constants */
+			          0x6e642033u32.to_be(),
+			          0x322d6279u32.to_be(),
+			          0x7465206bu32.to_be(),
 					  k.get_key_bits()[0].to_le(),
 					  k.get_key_bits()[1].to_le(),
 					  k.get_key_bits()[2].to_le(),
@@ -38,7 +38,17 @@ impl Chacha {
 	}
 
 	pub fn print_state(&self) {
-		println!("{:?}", self.state);
+		let mut keystream : KeyStreamBlock = [0;INNER_STATE_SIZE * 4];
+		for i in 0..INNER_STATE_SIZE {
+			keystream[i*4 + 0] = ((self.state[i] & 0x000000ff)) as u8;
+			keystream[i*4 + 1] = ((self.state[i] & 0x0000ff00) >> 8) as u8;
+			keystream[i*4 + 2] = ((self.state[i] & 0x00ff0000) >> 16) as u8;
+			keystream[i*4 + 3] = ((self.state[i] & 0xff000000) >> 24) as u8;
+		}
+		println!("state  {:?} ", keystream.iter()
+                        	  .map(|b| format!("{:02X}", b.to_le()))
+							  .collect::<Vec<_>>()
+							  .join(" "));		
 	}
     /**
      * Generates a block of key stream for the given block number
@@ -61,15 +71,15 @@ impl Chacha {
 			Chacha::quarter_round(&mut working_state, 2, 7, 8, 13);
 			Chacha::quarter_round(&mut working_state, 3, 4, 9, 14);
 		}
-		for i in 0..16 {
-			self.state[i] = self.state[i].overflowing_add(working_state[i]).0;
-			keystream[i*4 + 0] = ((working_state[i] & 0xff000000) >> 24) as u8;
-			keystream[i*4 + 1] = ((working_state[i] & 0x00ff0000) >> 16) as u8;
-			keystream[i*4 + 2] = ((working_state[i] & 0x0000ff00) >> 8) as u8;
-			keystream[i*4 + 3] = ((working_state[i] & 0x000000ff)) as u8;
+		for i in 0..INNER_STATE_SIZE {
+			working_state[i] = working_state[i].overflowing_add(self.state[i]).0;
+			keystream[i*4 + 0] = ((working_state[i] & 0x000000ff)) as u8;
+			keystream[i*4 + 1] = ((working_state[i] & 0x0000ff00) >> 8) as u8;
+			keystream[i*4 + 2] = ((working_state[i] & 0x00ff0000) >> 16) as u8;
+			keystream[i*4 + 3] = ((working_state[i] & 0xff000000) >> 24) as u8;
 		}
 	
-		println!("after  {:?} ", self.state.iter()
+		println!("after  {:?} ", keystream.iter()
                         	  .map(|b| format!("{:02X}", b))
 							  .collect::<Vec<_>>()
 							  .join(" "));
