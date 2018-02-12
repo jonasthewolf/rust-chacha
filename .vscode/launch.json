@@ -5,15 +5,23 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "gdb",
+            "request": "launch",
+            "name": "Launch Program",
+            "target": "${workspaceRoot}/target/debug/chacha-04f0e402cde3e1e9",
+            "cwd": "${workspaceRoot}"
+        },
+        {
             "name": "(Windows) Launch",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "D:\\workspaces\\rustworkspace\\rust-chacha\\target\\debug\\chacha-f0a2b8cf64c607c2.exe",
+            "program": "${workspaceFolder}/target/debug/chacha-f0a2b8cf64c607c2.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": true
         },
+
     ]
 }
