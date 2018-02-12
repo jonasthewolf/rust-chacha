@@ -5,14 +5,12 @@ pub mod key;
 
 #[cfg(test)]
 mod tests {
-	use key;
 	use chacha;
 
     // keystream Function Test Vector #1
 	#[test]
 	fn keystream_1() {
-		let inkey : [u8;256/8] = [0;32];
-		let mykey = key::Key::new(&inkey);
+		let mykey = vec![0;32];
 		let mynonce : chacha::Nonce = [ 0x00000000, 0x00000000, 0x0 ];
 		let mut c = chacha::Chacha::new(&mykey, &mynonce);
 		let mut keystream : [u8;64] = [0;64]; 
@@ -32,8 +30,7 @@ mod tests {
 	/// keystream Function Test Vector #2
 	#[test]
 	fn keystream_2() {
-		let inkey : [u8;256/8] = [0;32];
-		let mykey = key::Key::new(&inkey);
+		let mykey = vec![0;32];
 		let mynonce : chacha::Nonce = [ 0x00000000, 0x00000000, 0x0 ];
 		let mut c = chacha::Chacha::new(&mykey, &mynonce);
 		let mut keystream : [u8;64] = [0;64]; 
@@ -54,11 +51,11 @@ mod tests {
 	/// keystream Function Test Vector #3
 	#[test]
 	fn keystream_3() {
-		let mut inkey : [u8;256/8] = [0;32];
-		inkey[31] = 1;
-		let mykey = key::Key::new(&inkey);
+		let mut mykey = vec![0;32];
+		mykey[31] = 1;
 		let mynonce : chacha::Nonce = [ 0x00000000, 0x00000000, 0x0 ];
 		let mut c = chacha::Chacha::new(&mykey, &mynonce);
+		c.print_state();
 		let mut keystream : [u8;64] = [0;64]; 
 		c.get_keystream(&mut keystream, 1);
 		let actual = keystream.iter()

@@ -1,5 +1,4 @@
 
-use key::Key;
 
 // Type of inner state of chacha
 const INNER_STATE_SIZE : usize = 16;
@@ -23,21 +22,26 @@ pub struct Chacha {
 }
 
 impl Chacha {
-	pub fn new(k : &Key, n : &Nonce) -> Chacha {
+	pub fn new(k : &Vec<u8>, n : &Nonce) -> Chacha {
+		assert!(k.len() == 32);
+		println!("{:?}", k);
 		Chacha {
 			state : [ u32::from_le(0x61707865), 
 					  u32::from_le(0x3320646e), 
 					  u32::from_le(0x79622d32),
 					  u32::from_le(0x6b206574),
-					  k.get_key_bits()[0].to_le(),
-					  k.get_key_bits()[1].to_le(),
-					  k.get_key_bits()[2].to_le(),
-					  k.get_key_bits()[3].to_le(),
-					  k.get_key_bits()[4].to_le(),
-					  k.get_key_bits()[5].to_le(),
-					  k.get_key_bits()[6].to_le(),
-					  k.get_key_bits()[7].to_le(),
-					  0 /* BN */, n[0], n[1], n[2] ],
+					  (k[0]  as u32 | k[1]  as u32 >> 8 | k[2]  as u32 >> 16 | k[3]  as u32 >> 24),
+					  (k[4]  as u32 | k[5]  as u32 >> 8 | k[6]  as u32 >> 16 | k[7]  as u32 >> 24),
+					  (k[8]  as u32 | k[9]  as u32 >> 8 | k[10] as u32 >> 16 | k[11] as u32 >> 24),
+					  (k[12] as u32 | k[13] as u32 >> 8 | k[14] as u32 >> 16 | k[15] as u32 >> 24),
+					  (k[16] as u32 | k[17] as u32 >> 8 | k[18] as u32 >> 16 | k[19] as u32 >> 24),
+					  (k[20] as u32 | k[21] as u32 >> 8 | k[22] as u32 >> 16 | k[23] as u32 >> 24),
+					  (k[24] as u32 | k[25] as u32 >> 8 | k[26] as u32 >> 16 | k[27] as u32 >> 24),
+					  (k[28] as u32 | k[29] as u32 >> 8 | k[30] as u32 >> 16 | k[31] as u32 >> 24),
+					  0 /* BN */, 
+					  n[0], 
+					  n[1], 
+					  n[2] ],
 		}
 	}
 
