@@ -1,6 +1,5 @@
 
 use key::Key;
-use std::mem;
 
 // Type of inner state of chacha
 const INNER_STATE_SIZE : usize = 16;
@@ -11,7 +10,7 @@ const NONCE_LENGTH : usize = 3;
 pub type Nonce = [u32;NONCE_LENGTH];
 
 // Alias for generated keystream block
-type KeyStreamBlock = [u8;INNER_STATE_SIZE * mem::size_of::<u32>()];
+type KeyStreamBlock = [u8;INNER_STATE_SIZE * 4];
 
 // Index of block number
 const BLOCK_NUMBER_INDEX : usize = 12;

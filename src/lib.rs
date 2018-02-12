@@ -1,6 +1,4 @@
-#![feature(iterator_step_by)]
 
-mod util;
 pub mod chacha;
 pub mod key;
 
