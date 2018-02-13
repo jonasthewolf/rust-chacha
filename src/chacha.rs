@@ -4,8 +4,9 @@
 const INNER_STATE_SIZE : usize = 16;
 type InnerState = [u32;INNER_STATE_SIZE];
 
-// Type of nonce
+
 const NONCE_LENGTH : usize = 3;
+// Type of nonce
 pub type Nonce = [u32;NONCE_LENGTH];
 
 // Index of block number
@@ -54,14 +55,12 @@ impl Chacha {
 							  .join(" "));		
 	}
 
-    /**
-     * Generates a block of key stream for the given block number
-     *
-     * Params:
-     *   keystream = at least 64 bytes of memory for the generated key stream
-     *   blocknumber = the blocknumber to generate the keystream for
-     *
-     */
+    /// Generates a block of key stream for the given block number
+    //
+    // Params:
+    //   keystream = at least 64 bytes of memory for the generated key stream
+    //   blocknumber = the blocknumber to generate the keystream for
+    //
 	pub fn get_keystream(&mut self, keystream : &mut [u8], blocknumber : u32) {
 		assert!(keystream.len() == INNER_STATE_SIZE * 4);
 		self.state[BLOCK_NUMBER_INDEX] = blocknumber;
@@ -85,28 +84,24 @@ impl Chacha {
 		}
 	}
 
-	/**
-	 * 
-	 */
+	
 	pub fn get_next_keystream(&mut self, keystream : &mut [u8]) {
 		let bn = self.state[BLOCK_NUMBER_INDEX];
 		return self.get_keystream(keystream, bn + 1);
 	}
 	
-    /** Resets the block number to zero. */
+    /// Resets the block number to zero. 
 	pub fn reset_block_counter(&mut self) {
 		self.state[BLOCK_NUMBER_INDEX] = 0;
 	}
 
 
-    /** 
-     * Performs a quarter round of chacha. 
-     * 
-     * Params:
-     *  state = current working state for a block number
-     *  a, b, c, d = constant of algorithm
-     *
-     */
+    /// Performs a quarter round of chacha. 
+    // 
+    // Params:
+    //  state = current working state for a block number
+    //  a, b, c, d = constant of algorithm
+    //
 	fn quarter_round(state : &mut InnerState, a : usize, b : usize, c : usize, d : usize) {
 		state[a] = state[a].overflowing_add(state[b]).0;
 		state[d] ^= state[a];
