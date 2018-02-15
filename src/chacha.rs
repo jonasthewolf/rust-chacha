@@ -22,10 +22,10 @@ impl Chacha {
 	pub fn new(k : &Vec<u8>, n : &Nonce) -> Chacha {
 		assert!(k.len() == 32);
 		Chacha {
-			state : [ u32::from_le(0x61707865), 
-					  u32::from_le(0x3320646e), 
-					  u32::from_le(0x79622d32),
-					  u32::from_le(0x6b206574),
+			state : [ 0x61707865u32.to_le(), 
+					  0x3320646eu32.to_le(), 
+					  0x79622d32u32.to_le(),
+					  0x6b206574u32.to_le(),
 					  ((k[0]  as u32) | ((k[1]  as u32) << 8) | ((k[2]  as u32) << 16) | ((k[3]  as u32) << 24)),
 					  ((k[4]  as u32) | ((k[5]  as u32) << 8) | ((k[6]  as u32) << 16) | ((k[7]  as u32) << 24)),
 					  ((k[8]  as u32) | ((k[9]  as u32) << 8) | ((k[10] as u32) << 16) | ((k[11] as u32) << 24)),
