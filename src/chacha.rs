@@ -63,7 +63,7 @@ impl Chacha {
     //
 	pub fn get_keystream(&mut self, keystream : &mut [u8], blocknumber : u32) {
 		assert!(keystream.len() == INNER_STATE_SIZE * 4);
-		self.state[BLOCK_NUMBER_INDEX] = blocknumber;
+		self.state[BLOCK_NUMBER_INDEX] = blocknumber.to_le();
 		let mut working_state = self.state.clone();
 		for _ in 0 .. 20/2 {
 			Chacha::quarter_round(&mut working_state, 0, 4, 8, 12);
@@ -86,7 +86,7 @@ impl Chacha {
 
 	
 	pub fn get_next_keystream(&mut self, keystream : &mut [u8]) {
-		let bn = self.state[BLOCK_NUMBER_INDEX];
+		let bn = u32::from_le(self.state[BLOCK_NUMBER_INDEX]);
 		return self.get_keystream(keystream, bn + 1);
 	}
 	
