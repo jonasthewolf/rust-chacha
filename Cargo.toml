@@ -3,4 +3,10 @@ name = "chacha"
 version = "0.1.0"
 authors = ["Jonas Wolf"]
 
-[dependencies]
+
+[dev-dependencies]
+criterion = "0.2.5"
+
+[[bench]]
+name = "chacha_bench"
+harness = false
