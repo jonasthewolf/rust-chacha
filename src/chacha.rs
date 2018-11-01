@@ -16,7 +16,7 @@ pub struct Chacha {
 }
 
 impl Chacha {
-	pub fn new(k: &Vec<u8>, n: &Nonce) -> Chacha {
+	pub fn new(k: &[u8], n: &Nonce) -> Chacha {
 		assert!(k.len() == 32);
 		Chacha {
 			state: [
@@ -33,7 +33,7 @@ impl Chacha {
 					| ((k[6] as u32) << 16)
 					| ((k[7] as u32) << 24)),
 				((k[8] as u32)
-					| ((k[9] as u32) << 8)
+					| ((k[9]  as u32) << 8)
 					| ((k[10] as u32) << 16)
 					| ((k[11] as u32) << 24)),
 				((k[12] as u32)
@@ -62,24 +62,6 @@ impl Chacha {
 				n[2].to_le(),
 			],
 		}
-	}
-
-	fn _print_state(&self) {
-		let mut keystream = [0u8; INNER_STATE_SIZE * 4];
-		for i in 0..INNER_STATE_SIZE {
-			keystream[i * 4 + 0] = (self.state[i] & 0x000000ff) as u8;
-			keystream[i * 4 + 1] = ((self.state[i] & 0x0000ff00) >> 8) as u8;
-			keystream[i * 4 + 2] = ((self.state[i] & 0x00ff0000) >> 16) as u8;
-			keystream[i * 4 + 3] = ((self.state[i] & 0xff000000) >> 24) as u8;
-		}
-		println!(
-			"state  {:?} ",
-			keystream
-				.iter()
-				.map(|b| format!("{:02X}", b.to_le()))
-				.collect::<Vec<_>>()
-				.join(" ")
-		);
 	}
 
 	/// Generates a block of key stream for the given block number
