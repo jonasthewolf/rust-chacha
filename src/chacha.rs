@@ -94,8 +94,8 @@ impl Chacha {
 	}
 
 	pub fn get_next_keystream(&mut self, keystream: &mut [u8]) {
-		let bn = u32::from_le(self.state[BLOCK_NUMBER_INDEX]);
-		return self.get_keystream(keystream, bn + 1);
+		let bn = u32::from_le(self.state[BLOCK_NUMBER_INDEX] + 1);
+		return self.get_keystream(keystream, bn);
 	}
 
 	/// Resets the block number to zero.
@@ -123,4 +123,16 @@ impl Chacha {
 		state[b] ^= state[c];
 		state[b] = state[b].rotate_left(7);
 	}
+}
+
+#[test]
+fn reset_block_counter() {
+	let mykey = vec![0; 32];
+	let mynonce: Nonce = [0x00000000, 0x00000000, 0x0];
+	let mut c = Chacha::new(&mykey, &mynonce);
+	let mut keystream: [u8; 64] = [0; 64];
+	c.get_keystream(&mut keystream, 5);
+	assert_eq!(c.state[BLOCK_NUMBER_INDEX], 5);
+	c.reset_block_counter();
+	assert_eq!(c.state[BLOCK_NUMBER_INDEX], 0);
 }

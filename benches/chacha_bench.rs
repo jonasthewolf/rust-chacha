@@ -1,8 +1,5 @@
-#[macro_use]
-extern crate criterion;
-use criterion::Criterion;
-extern crate chacha;
 use chacha::chacha::{Chacha,Nonce};
+use criterion::{Criterion, criterion_group, criterion_main};
 
 fn bench_1(b: &mut Criterion) {
     let mykey = vec![

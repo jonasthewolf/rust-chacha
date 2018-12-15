@@ -4,7 +4,7 @@ pub mod chacha;
 
 #[cfg(test)]
 mod tests {
-	use chacha;
+	use crate::chacha;
 
 	// keystream Function Test Vector #1
 	#[test]
@@ -123,6 +123,29 @@ mod tests {
 		assert_eq!(actual, expected);
 	}
 
+	/// keystream Function Test Vector #2
+	#[test]
+	fn next_keystream_1() {
+		let mykey = vec![0; 32];
+		let mynonce: chacha::Nonce = [0x00000000, 0x00000000, 0x0];
+		let mut c = chacha::Chacha::new(&mykey, &mynonce);
+		let mut keystream: [u8; 64] = [0; 64];
+		c.get_next_keystream(&mut keystream);
+		let actual = keystream
+			.iter()
+			.map(|b| format!("{:02x}", b))
+			.collect::<Vec<_>>()
+			.join(" ");
+		let expected = format!(
+			"{}{}{}{}",
+			"9f 07 e7 be 55 51 38 7a 98 ba 97 7c 73 2d 08 0d cb ",
+			"0f 29 a0 48 e3 65 69 12 c6 53 3e 32 ee 7a ed 29 b7 ",
+			"21 76 9c e6 4e 43 d5 71 33 b0 74 d8 39 d5 31 ed 1f ",
+			"28 51 0a fb 45 ac e1 0a 1f 4b 79 4d 6f"
+		);
+		assert_eq!(actual, expected);
+	}
+
 	/// Encryption Test Vector #1
 	#[test]
 	fn encryption_1() {
@@ -230,4 +253,6 @@ mod tests {
 		);
 		assert_eq!(actual, expected);
 	}
+
+
 }

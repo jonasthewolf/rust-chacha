@@ -3,3 +3,5 @@
 Cargo.lock
 .vscode/launch.json
 .DS_Store
+chacha.code-workspace
+llvm-lcov
