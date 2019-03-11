@@ -20,10 +20,10 @@ impl Chacha {
 		assert!(k.len() == 32);
 		Chacha {
 			state: [
-				0x61707865u32.to_le(),
-				0x3320646eu32.to_le(),
-				0x79622d32u32.to_le(),
-				0x6b206574u32.to_le(),
+				0x6170_7865u32.to_le(),
+				0x3320_646eu32.to_le(),
+				0x7962_2d32u32.to_le(),
+				0x6b20_6574u32.to_le(),
 				u32::from_le_bytes([k[0],  k[1],  k[2],  k[3]]),
 				u32::from_le_bytes([k[4],  k[5],  k[6],  k[7]]),
 				u32::from_le_bytes([k[8],  k[9],  k[10], k[11]]),
@@ -49,7 +49,7 @@ impl Chacha {
 	pub fn get_keystream(&mut self, keystream: &mut [u8], blocknumber: u32) {
 		assert!(keystream.len() == INNER_STATE_SIZE * 4);
 		self.state[BLOCK_NUMBER_INDEX] = blocknumber.to_le();
-		let mut working_state = self.state.clone();
+		let mut working_state = self.state;
 		for _ in 0..20 / 2 {
 			Chacha::quarter_round(&mut working_state, 0, 4, 8, 12);
 			Chacha::quarter_round(&mut working_state, 1, 5, 9, 13);
@@ -62,16 +62,16 @@ impl Chacha {
 		}
 		for i in 0..INNER_STATE_SIZE {
 			working_state[i] = working_state[i].overflowing_add(self.state[i]).0;
-			keystream[i * 4 + 0] = (working_state[i] & 0x000000ff) as u8;
-			keystream[i * 4 + 1] = ((working_state[i] & 0x0000ff00) >> 8) as u8;
-			keystream[i * 4 + 2] = ((working_state[i] & 0x00ff0000) >> 16) as u8;
-			keystream[i * 4 + 3] = ((working_state[i] & 0xff000000) >> 24) as u8;
+			keystream[i * 4    ] = ( working_state[i] & 0x0000_00ff) as u8;
+			keystream[i * 4 + 1] = ((working_state[i] & 0x0000_ff00) >> 8) as u8;
+			keystream[i * 4 + 2] = ((working_state[i] & 0x00ff_0000) >> 16) as u8;
+			keystream[i * 4 + 3] = ((working_state[i] & 0xff00_0000) >> 24) as u8;
 		}
 	}
 
 	pub fn get_next_keystream(&mut self, keystream: &mut [u8]) {
 		let bn = u32::from_le(self.state[BLOCK_NUMBER_INDEX] + 1);
-		return self.get_keystream(keystream, bn);
+		self.get_keystream(keystream, bn)
 	}
 
 	/// Resets the block number to zero.
