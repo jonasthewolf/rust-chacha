@@ -69,6 +69,13 @@ impl Chacha {
 		}
 	}
 
+	/// Generates a block of key stream for the next block number
+	//
+    // Uses and increments the current block number before generating the key stream.
+	//
+	// Params:
+	//   keystream = at least 64 bytes of memory for the generated key stream
+	//
 	pub fn get_next_keystream(&mut self, keystream: &mut [u8]) {
 		let bn = u32::from_le(self.state[BLOCK_NUMBER_INDEX] + 1);
 		self.get_keystream(keystream, bn)
