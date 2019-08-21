@@ -1,5 +1,5 @@
-use chacha::chacha::{Chacha,Nonce};
-use criterion::{Criterion, criterion_group, criterion_main};
+use chacha::chacha::{Chacha, Nonce};
+use criterion::{criterion_group, criterion_main, Criterion};
 
 fn bench_1(b: &mut Criterion) {
     let mykey = vec![
