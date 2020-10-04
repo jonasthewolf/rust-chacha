@@ -1,4 +1,4 @@
-![Rust](https://github.com/jonasthewolf/rust-chacha/workflows/Rust/badge.svg)
+![Build](https://github.com/jonasthewolf/rust-chacha/workflows/Rust/badge.svg)
 
 # rust-chacha
 
