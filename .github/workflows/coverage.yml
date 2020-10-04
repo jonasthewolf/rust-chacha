@@ -25,7 +25,7 @@ jobs:
         env: 
           CARGO_INCREMENTAL: 0
           RUSTFLAGS: "-Zprofile -Clink-dead-code -Copt-level=0 -Ccodegen-units=1 -Zpanic_abort_tests -Cpanic=abort -Cpanic=abort -Coverflow-checks=off -Zinstrument-coverage"
-           LLVM_PROFILE_FILE: "profile.profraw"
+          LLVM_PROFILE_FILE: "profile.profraw"
         run: |
           cargo +nightly build
           cargo +nightly test --message-format=json | jq -r "select(.profile.test == true) | .filenames[]" > filenames.txt
