@@ -17,8 +17,23 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      # Install LLVM
+      - name: Cache LLVM and Clang
+        id: cache-llvm
+        uses: actions/cache@v2
+        with:
+          path: ~/.clang
+          key: llvm-12.0
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          version: "12.0"
+          directory: ~/.clang
+          cached: ${{ steps.cache-llvm.outputs.cache-hit }}
+
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      # Install nightly rust toolchain (required to use LLVM code coverage instrumentation)
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
@@ -41,6 +56,7 @@ jobs:
           llvm-profdata merge -sparse -o profile.profdata *.profraw 
           llvm-cov show --show-expansions --show-line-counts-or-regions --ignore-filename-regex="/rustc" --format=text -instr-profile=profile.profdata <filenames.txt
       
+      # Upload to codecov.io
       - name: Upload to codecov.io
         run: |
           bash <(curl -s https://codecov.io/bash)
