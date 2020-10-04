@@ -40,7 +40,7 @@ jobs:
           LLVM_PROFILE_FILE: "profile.profraw"
         run: |
           cargo +nightly build
-          cargo +nightly test --no-run --message-format=json | jq -r "select(.profile.test == true) | .filenames[]" > filenames.txt
+          cargo +nightly test --no-run --message-format=json | jq -r "select(.profile.test == true) | .filenames[]" | grep -v dSYM - > filenames.txt
           cargo +nightly test 
 
       # Extracte code coverage information
