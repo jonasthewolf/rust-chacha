@@ -23,6 +23,7 @@ jobs:
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           sudo ./llvm.sh 12
+          /usr/lib/llvm-12/bin/llvm-profdata merge -sparse -o profile.profdata *.profraw 
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
@@ -46,8 +47,8 @@ jobs:
       # Extracte code coverage information
       - name: Extract Code Coverage
         run: |
-          /usr/lib/llvm-9/bin/llvm-profdata merge -sparse -o profile.profdata *.profraw 
-          /usr/lib/llvm-9/bin/llvm-cov show --show-expansions --show-line-counts-or-regions --ignore-filename-regex="/rustc" --format=text -instr-profile=profile.profdata <filenames.txt
+          /usr/lib/llvm-12/bin/llvm-profdata merge -sparse -o profile.profdata *.profraw 
+          /usr/lib/llvm-12/bin/llvm-cov show --show-expansions --show-line-counts-or-regions --ignore-filename-regex="/rustc" --format=text -instr-profile=profile.profdata <filenames.txt
       
       # Upload to codecov.io
       - name: Upload to codecov.io
