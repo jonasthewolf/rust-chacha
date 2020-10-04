@@ -53,8 +53,8 @@ jobs:
       # Extracte code coverage information
       - name: Extract Code Coverage
         run: |
-          ~/.clang/llvm-profdata merge -sparse -o profile.profdata *.profraw 
-          ~/.clang/llvm-cov show --show-expansions --show-line-counts-or-regions --ignore-filename-regex="/rustc" --format=text -instr-profile=profile.profdata <filenames.txt
+          llvm-profdata merge -sparse -o profile.profdata *.profraw 
+          llvm-cov show --show-expansions --show-line-counts-or-regions --ignore-filename-regex="/rustc" --format=text -instr-profile=profile.profdata <filenames.txt
       
       # Upload to codecov.io
       - name: Upload to codecov.io
