@@ -20,7 +20,7 @@ jobs:
       # Install LLVM
       - name: Install LLVM
         run: |
-          sudo apt-get install lcov llvm
+          sudo apt-get install lcov llvm-11
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
