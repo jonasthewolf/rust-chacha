@@ -47,7 +47,7 @@ jobs:
       - name: Extract Code Coverage
         run: |
           /usr/lib/llvm-12/bin/llvm-profdata merge -sparse -o profile.profdata profile.profraw 
-          /usr/lib/llvm-12/bin/llvm-cov show --show-expansions --show-line-counts-or-regions --ignore-filename-regex="/rustc" --format=text -instr-profile=profile.profdata `cat filenames.txt` > coverage.txt
+          /usr/lib/llvm-12/bin/llvm-cov show -instr-profile=profile.profdata `cat filenames.txt` > coverage.txt
       
       # Upload to codecov.io
       - name: Upload to codecov.io
