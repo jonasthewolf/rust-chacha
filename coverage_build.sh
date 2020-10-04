@@ -1,15 +1,12 @@
 #!/bin/sh
 PATH=$PATH:/Library/Developer/CommandLineTools/usr/bin
-CARGO_INCREMENTAL=0
-cargo clean
-cargo rustc -- --test -Clink-dead-code -Copt-level=1 -Ccodegen-units=1 -Zno-landing-pads -Cpasses=insert-gcov-profiling -L/Library/Developer/CommandLineTools/usr/lib/clang/10.0.0/lib/darwin/ -lclang_rt.profile_osx
+export CARGO_INCREMENTAL=0
+export RUSTFLAGS="-Zprofile -Clink-dead-code -Copt-level=0 -Ccodegen-units=1 -Zpanic_abort_tests -Cpanic=abort -Coverflow-checks=off -Zinstrument-coverage" 
 
-mkdir target/coverage
-./target/debug/deps/chacha-299bb523556f865a
+rm *.profdata
 
-lcov --gcov-tool ./llvm-lcov --rc lcov_branch_coverage=1 --rc lcov_excl_line=assert --capture --directory . --base-directory . --no-external -o target/coverage/raw.lcov
-lcov --gcov-tool ./llvm-lcov --rc lcov_branch_coverage=1 --rc lcov_excl_line=assert --no-external --extract target/coverage/raw.lcov "$(pwd)/*" -o target/coverage/raw_crate.lcov
+cargo +nightly clean
+cargo +nightly test
 
-genhtml --branch-coverage --demangle-cpp --legend -o target/coverage/ target/coverage/raw_crate.lcov
-
-rm *.gcda *.gcno
+xcrun llvm-profdata merge -sparse -o chacha.profdata *.profraw   
+xcrun llvm-cov show --show-regions --ignore-filename-regex="/rustc" --format=html -instr-profile=chacha.profdata --output-dir=./target/debug ./target/debug/deps/chacha-cefb82c7a65575f7
