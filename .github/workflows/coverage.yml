@@ -20,7 +20,7 @@ jobs:
       # Install LLVM
       - name: Install LLVM
         run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://apt.llvm.org/llvm.sh | sudo sh
+          sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
