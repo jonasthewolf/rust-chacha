@@ -9,4 +9,4 @@ cargo +nightly clean
 cargo +nightly test
 
 xcrun llvm-profdata merge -sparse -o chacha.profdata *.profraw   
-xcrun llvm-cov show --show-regions --ignore-filename-regex="/rustc" --format=html -instr-profile=chacha.profdata --output-dir=./target/debug ./target/debug/deps/chacha-cefb82c7a65575f7
+xcrun llvm-cov show --show-expansions --show-line-counts-or-regions --ignore-filename-regex="/rustc" --format=html -instr-profile=chacha.profdata --output-dir=./target/debug ./target/debug/deps/chacha-cefb82c7a65575f7
