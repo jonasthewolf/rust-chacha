@@ -1,5 +1,7 @@
 ![Build](https://github.com/jonasthewolf/rust-chacha/workflows/Build/badge.svg)
 
+[![codecov](https://codecov.io/gh/jonasthewolf/rust-chacha/branch/master/graph/badge.svg)](https://codecov.io/gh/jonasthewolf/rust-chacha)
+
 # rust-chacha
 
 A Chacha20 implementation in rust.
