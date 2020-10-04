@@ -19,7 +19,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
+      - id: component
+        uses: actions-rs/components-nightly@v1
+      - uses: actions-rs/toolchain@v1
+        with:
+            toolchain: ${{ steps.component.outputs.toolchain }}
+            override: true
+          
       # Build and execute tests
       - name: Build
         env: 
