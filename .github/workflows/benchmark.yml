@@ -21,4 +21,6 @@ jobs:
           tool: 'cargo'
           output-file-path: output.txt
           benchmark-data-dir-path: /
+          # Personal access token to deploy GitHub Pages branch
+          github-token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
           auto-push: true
