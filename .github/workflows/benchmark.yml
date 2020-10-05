@@ -15,9 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run benchmark
-        run: cargo bench | tee output.txt
+        run: cargo bench  -- --output-format bencher | tee output.txt
       - name: Store benchmark result
-        uses: jonasthewolf/github-action-benchmark@v1
+        uses: rhysd/github-action-benchmark@v1
         with:
           name: Rust Benchmark
           tool: 'cargo'
