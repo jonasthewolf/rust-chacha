@@ -50,8 +50,9 @@ jobs:
           /usr/lib/llvm-12/bin/llvm-cov show -instr-profile=profile.profdata `cat filenames.txt` > coverage.txt
       
       # Upload to codecov.io
-      - name: Upload to codecov.io
-        run: |
-          bash <(curl -s https://codecov.io/bash) -f coverage.txt
+      - uses: codecov/codecov-action@v1
+        with:
+          file: coverage.txt
+          fail_ci_if_error: true
 
 

@@ -7,6 +7,9 @@ edition = "2018"
 [dev-dependencies]
 criterion = "0.2.5"
 
+[profile.bench]
+lto = true
+
 [[bench]]
 name = "chacha_bench"
 harness = false
