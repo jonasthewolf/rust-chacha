@@ -10,7 +10,7 @@ fn bench_1(b: &mut Criterion) {
     let mynonce: Nonce = [0x00000000, 0x00000000, 0x02000000];
     let mut c = Chacha::new(&mykey, &mynonce);
     let mut keystream = [0u8; 64];
-    b.bench_function("chacha20 keystream", move |x| {
+    b.bench_function("chacha20_keystream", move |x| {
         x.iter(|| c.get_keystream(&mut keystream[0..64], 0))
     });
 }
