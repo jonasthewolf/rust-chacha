@@ -22,6 +22,6 @@ jobs:
           name: Rust Benchmark
           tool: 'cargo'
           output-file-path: output.txt
-          benchmark-data-dir-path: /
+          benchmark-data-dir-path: /benchmark
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: true
