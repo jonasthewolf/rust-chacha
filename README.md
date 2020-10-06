@@ -9,3 +9,5 @@
 A Chacha20 implementation in rust.
 
 Feel free to use it and please let me know.
+
+Benchmark can be found [here](https://jonasthewolf.github.io/rust-chacha/dev/bench/).
