@@ -10,28 +10,33 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  measure:
-    # The type of runner that the job will run on
+  # Install LLVM
+  install-llvm:
     runs-on: ubuntu-latest
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Install LLVM
       - name: Install LLVM
         run: |
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           sudo ./llvm.sh 12
 
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      # Install nightly rust toolchain (required to use LLVM code coverage instrumentation)
+  # Install nightly rust toolchain (required to use LLVM code coverage instrumentation)
+  install-toolchain:
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           components: llvm-tools-preview
           
+  # This workflow contains a single job called "build"
+  measure:
+    needs: [install-llvm, install-toolchain]
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
       # Build and execute tests
       - name: Build and test
         env: 
