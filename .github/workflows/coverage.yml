@@ -37,6 +37,7 @@ jobs:
         env: 
           CARGO_INCREMENTAL: 0
           RUSTFLAGS: "-Zprofile -Clink-dead-code -Copt-level=0 -Ccodegen-units=1 -Zpanic_abort_tests -Cpanic=abort -Cpanic=abort -Coverflow-checks=off -Zinstrument-coverage"
+          RUSTDOCFLAGS: "-Cpanic=abort"
           LLVM_PROFILE_FILE: "profile.profraw"
         run: |
           cargo +nightly build
@@ -47,12 +48,17 @@ jobs:
       - name: Extract Code Coverage
         run: |
           /usr/lib/llvm-12/bin/llvm-profdata merge -sparse -o profile.profdata profile.profraw 
-          /usr/lib/llvm-12/bin/llvm-cov show -instr-profile=profile.profdata `cat filenames.txt` > coverage.txt
+          /usr/lib/llvm-12/bin/llvm-cov show -show-regions -instr-profile=profile.profdata `cat filenames.txt` > coverage.txt
+          /usr/lib/llvm-12/bin/llvm-cov export --format=lcov -instr-profile=profile.profdata `cat filenames.txt` > ./coverage/lcov.info
       
       # Upload to codecov.io
       - uses: codecov/codecov-action@v1
         with:
           file: coverage.txt
           fail_ci_if_error: true
-
+ 
+      - uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        
 
