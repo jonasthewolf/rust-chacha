@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602009849134,
+  "lastUpdate": 1602010345415,
   "repoUrl": "https://github.com/jonasthewolf/rust-chacha",
   "entries": {
     "Rust Benchmark": [
@@ -119,6 +119,36 @@ window.BENCHMARK_DATA = {
             "name": "chacha20_keystream",
             "value": 158,
             "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "jonas.wolf@jonaswolf.org",
+            "name": "jonasthewolf",
+            "username": "jonasthewolf"
+          },
+          "committer": {
+            "email": "jonas.wolf@jonaswolf.org",
+            "name": "jonasthewolf",
+            "username": "jonasthewolf"
+          },
+          "distinct": true,
+          "id": "d68344f0b4bf892d2b19eaf1de83041a8127769a",
+          "message": "Parallelize coverage measurement.",
+          "timestamp": "2020-10-06T20:48:44+02:00",
+          "tree_id": "f7e3732fe90e8f8d8c2aadc519fd53bc23cd456e",
+          "url": "https://github.com/jonasthewolf/rust-chacha/commit/d68344f0b4bf892d2b19eaf1de83041a8127769a"
+        },
+        "date": 1602010344808,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "chacha20_keystream",
+            "value": 175,
+            "range": "± 13",
             "unit": "ns/iter"
           }
         ]
