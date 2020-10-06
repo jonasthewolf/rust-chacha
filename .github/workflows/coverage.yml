@@ -10,10 +10,10 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # Install LLVM
-  install-llvm:
+  measure:
     runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
+
+    # Install LLVM
     steps:
       - name: Install LLVM
         run: |
@@ -21,20 +21,15 @@ jobs:
           chmod +x llvm.sh
           sudo ./llvm.sh 12
 
-  # Install nightly rust toolchain (required to use LLVM code coverage instrumentation)
-  install-toolchain:
-    steps:
+      # Install nightly rust toolchain (required to use LLVM code coverage instrumentation)
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           components: llvm-tools-preview
           
-  # This workflow contains a single job called "build"
-  measure:
-    needs: [install-llvm, install-toolchain]
-    steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+  
       # Build and execute tests
       - name: Build and test
         env: 
@@ -51,15 +46,9 @@ jobs:
       - name: Extract Code Coverage
         run: |
           /usr/lib/llvm-12/bin/llvm-profdata merge -sparse -o profile.profdata profile.profraw 
-          /usr/lib/llvm-12/bin/llvm-cov show -show-regions -instr-profile=profile.profdata `cat filenames.txt` > coverage.txt
           /usr/lib/llvm-12/bin/llvm-cov export --format=lcov -instr-profile=profile.profdata `cat filenames.txt` > lcov.info
       
-      # Upload to codecov.io
-      - uses: codecov/codecov-action@v1
-        with:
-          file: coverage.txt
-          fail_ci_if_error: true
- 
+      # Upload to codecov.io 
       - uses: coverallsapp/github-action@master
         with:
           path-to-lcov: lcov.info

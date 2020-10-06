@@ -2,7 +2,7 @@
 
 ![Build](https://github.com/jonasthewolf/rust-chacha/workflows/Build/badge.svg)
 
-[![codecov](https://codecov.io/gh/jonasthewolf/rust-chacha/branch/master/graph/badge.svg)](https://codecov.io/gh/jonasthewolf/rust-chacha)
+[![Coverage Status](https://coveralls.io/repos/github/jonasthewolf/rust-chacha/badge.svg?branch=master)](https://coveralls.io/github/jonasthewolf/rust-chacha?branch=master)
 
 # rust-chacha
 

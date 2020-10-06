@@ -1,8 +1,0 @@
-coverage:
-  status:
-    project:
-      default:
-        target: 100%  
-
-codecov:
-  require_ci_to_pass: true
