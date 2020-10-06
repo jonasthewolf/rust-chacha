@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602010606744,
+  "lastUpdate": 1602011669911,
   "repoUrl": "https://github.com/jonasthewolf/rust-chacha",
   "entries": {
     "Rust Benchmark": [
@@ -179,6 +179,36 @@ window.BENCHMARK_DATA = {
             "name": "chacha20_keystream",
             "value": 174,
             "range": "± 7",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "jonas.wolf@jonaswolf.org",
+            "name": "jonasthewolf",
+            "username": "jonasthewolf"
+          },
+          "committer": {
+            "email": "jonas.wolf@jonaswolf.org",
+            "name": "jonasthewolf",
+            "username": "jonasthewolf"
+          },
+          "distinct": true,
+          "id": "f13b4b63e5d727570e362dacec22587c9f53a82f",
+          "message": "Move to coveralls.io. Unparallize jobs.",
+          "timestamp": "2020-10-06T21:10:33+02:00",
+          "tree_id": "99db837752772553b8c3f96919f239205f5decc1",
+          "url": "https://github.com/jonasthewolf/rust-chacha/commit/f13b4b63e5d727570e362dacec22587c9f53a82f"
+        },
+        "date": 1602011669260,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "chacha20_keystream",
+            "value": 186,
+            "range": "± 10",
             "unit": "ns/iter"
           }
         ]
