@@ -7,3 +7,5 @@ chacha.code-workspace
 llvm-lcov
 *.profdata
 *.profraw
+*.gcda
+*.gcno
