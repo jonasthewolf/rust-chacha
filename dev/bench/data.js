@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602012505724,
+  "lastUpdate": 1628346799037,
   "repoUrl": "https://github.com/jonasthewolf/rust-chacha",
   "entries": {
     "Rust Benchmark": [
@@ -269,6 +269,36 @@ window.BENCHMARK_DATA = {
             "name": "chacha20_keystream",
             "value": 170,
             "range": "± 11",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "jonas.wolf@jonaswolf.org",
+            "name": "jonasthewolf",
+            "username": "jonasthewolf"
+          },
+          "committer": {
+            "email": "jonas.wolf@jonaswolf.org",
+            "name": "jonasthewolf",
+            "username": "jonasthewolf"
+          },
+          "distinct": true,
+          "id": "be5028deba4ec7443af481345e6b87a42cb7cd35",
+          "message": "Move tests to chacha submodule.",
+          "timestamp": "2021-08-07T16:30:43+02:00",
+          "tree_id": "7c99eaf1fd3c11103e7933fa2df50908459058f1",
+          "url": "https://github.com/jonasthewolf/rust-chacha/commit/be5028deba4ec7443af481345e6b87a42cb7cd35"
+        },
+        "date": 1628346798294,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "chacha20_keystream",
+            "value": 163,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
